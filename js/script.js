@@ -1,20 +1,9 @@
-/* Задания на урок:
-
-1) Удалить все рекламные блоки со страницы (правая часть сайта)
-
-2) Изменить жанр фильма, поменять "комедия" на "драма"
-
-3) Изменить задний фон постера с фильмом на изображение "bg.jpg". Оно лежит в папке img.
-Реализовать только при помощи JS
-
-4) Список фильмов на странице сформировать на основании данных из этого JS файла.
-Отсортировать их по алфавиту 
-
-5) Добавить нумерацию выведенных фильмов */
-
 'use strict';
 
-const movieDB = {
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const movieDB = {
     movies: [
         "Логан",
         "Лига справедливости",
@@ -27,27 +16,66 @@ const movieDB = {
 const ads = document.querySelectorAll('.promo__adv img'),
       bg = document.querySelector('.promo__bg'),
       genre = bg.querySelector('.promo__genre'),
-      movieList = document.querySelector('.promo__interactive-list');
+      movieList = document.querySelector('.promo__interactive-list'),
+      movieForm = document.querySelector('form.add'), //запросить тег form с классом add
+      movieInput = movieForm.querySelector('.adding__input'),
+      checkbox = movieForm.querySelector('[type="checkbox"]'); //запрос по атрибуту
 
-ads.forEach(item => {
-    item.remove();
+movieForm.addEventListener('submit', (event) => {
+         event.preventDefault();
+
+         const addFilm = movieInput.value;
+         const isFavourite = checkbox.checked;
+
+         movieDB.movies.push(addFilm);
+         arrSort(movieDB.movies);
+         addToMovieList(movieDB.movies, movieList);
+
+         event.target.reset(); //обращаемся к самому элементу, на котором происходит событие
 });
 
 
-genre.textContent = "драма";
+const adsRemover = (arr) => {
+    arr.forEach(item => {
+        item.remove();
+    });
+};
 
-bg.style.backgroundImage = 'url("img/bg.jpg")';
+adsRemover(ads);
 
-movieList.innerHTML = "";
+const changeWebPage = () => {
+    genre.textContent = "драма";
 
-movieDB.movies.sort();
+    bg.style.backgroundImage = 'url("img/bg.jpg")';
 
-movieDB.movies.forEach((movie, i) => {
-     movieList.innerHTML += `
-     <li class="promo__interactive-item">  ${i + 1} ${movie}
-                            <div class="delete"></div>
-                        </li>
-                        </li>
-                       
-     `;
+};
+
+changeWebPage();
+
+const arrSort = (arr) => {
+    arr.sort();
+};
+
+arrSort(movieDB.movies);
+
+
+function addToMovieList(films, parent) {
+    parent.innerHTML = "";
+
+    films.forEach((movie, i) => {
+        parent.innerHTML += `
+        <li class="promo__interactive-item">  ${i + 1} ${movie}
+                               <div class="delete"></div>
+                           </li>
+                           </li>
+                          
+        `;
+   });
+}
+
+addToMovieList(movieDB.movies, movieList);
+
 });
+
+
+
