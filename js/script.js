@@ -24,12 +24,22 @@ const ads = document.querySelectorAll('.promo__adv img'),
 movieForm.addEventListener('submit', (event) => {
          event.preventDefault();
 
-         const addFilm = movieInput.value;
+         let addFilm = movieInput.value;
          const isFavourite = checkbox.checked;
 
-         movieDB.movies.push(addFilm);
-         arrSort(movieDB.movies);
-         addToMovieList(movieDB.movies, movieList);
+         if (addFilm) {
+            if (addFilm.length > 21) {
+                addFilm = `${addFilm.substring(0, 22)}...`;
+            }
+
+         if (isFavourite) {
+             console.log("Добавляем любимый фильм");
+         }
+
+            movieDB.movies.push(addFilm);
+            arrSort(movieDB.movies);
+            addToMovieList(movieDB.movies, movieList);
+         }
 
          event.target.reset(); //обращаемся к самому элементу, на котором происходит событие
 });
@@ -56,11 +66,10 @@ const arrSort = (arr) => {
     arr.sort();
 };
 
-arrSort(movieDB.movies);
-
 
 function addToMovieList(films, parent) {
     parent.innerHTML = "";
+    arrSort(movieDB.movies);
 
     films.forEach((movie, i) => {
         parent.innerHTML += `
@@ -71,6 +80,16 @@ function addToMovieList(films, parent) {
                           
         `;
    });
+
+     document.querySelectorAll('.delete').forEach((btn, i) => {
+          btn.addEventListener("click", () => {
+              btn.parentElement.remove();
+              movieDB.movies.splice(i, 1);
+
+              addToMovieList(films, parent);
+          });
+
+     });
 }
 
 addToMovieList(movieDB.movies, movieList);
